@@ -6,6 +6,7 @@
 # include <stdlib.h>
 # include <pthread.h>
 # include <stdio.h>
+# include <sys/time.h>
 //# include "libft/libft.h"
 
 typedef struct s_conds
@@ -23,7 +24,10 @@ typedef	struct s_plato
 	pthread_mutex_t	*writing;
 	pthread_mutex_t	*left;
 	pthread_mutex_t	*right;
+	struct timeval last_eat;
 	int	*status;
+	int	l;
+	int	r;
 	int	num;
 	int	eat;
 	int	sleep;
