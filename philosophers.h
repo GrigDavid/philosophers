@@ -11,7 +11,8 @@
 
 typedef struct s_conds
 {
-	pthread_mutex_t	*p;
+	pthread_mutex_t	*writing;
+	struct timeval	starttime;
 	int	n;
 	int	eat;
 	int	sleep;
@@ -21,20 +22,15 @@ typedef struct s_conds
 
 typedef	struct s_plato
 {
-	pthread_mutex_t	*writing;
-	pthread_mutex_t	*left;
-	pthread_mutex_t	*right;
-	struct timeval last_eat;
-	int	*status;
-	int	l;
-	int	r;
-	int	num;
-	int	eat;
-	int	sleep;
-	int	die;
-	int	fin;
+	t_conds			*conds_cpy;
+	pthread_mutex_t	*first;
+	pthread_mutex_t	*second;
+	struct timeval	last_eat;
+	int				*status;
+	int				f;
+	int				s;
+	int				num;
 } t_plato;
-
 
 t_conds	*parser(int argc, char **argv);
 

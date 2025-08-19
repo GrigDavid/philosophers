@@ -1,5 +1,5 @@
 CC  = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
 NAME = philosophers
 DEPS = philosophers.h
 SRCS = philosophers.c# parser.c

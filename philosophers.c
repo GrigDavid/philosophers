@@ -1,6 +1,6 @@
 #include "philosophers.h"
 #include <sys/wait.h>
-//skzbi hamar n = 5; eat = 100; sleep = 50; die = 200
+// skzbi hamar n = 5; eat = 100; sleep = 50; die = 200
 /*
 void	*aristotle(void *v_plato)
 {
@@ -20,90 +20,122 @@ void	*aristotle(void *v_plato)
 
 }*/
 
-void	die(int i)
+long long my_time(struct timeval tmp)
 {
-	printf("%d just died, you're a terrible parent!\n", i);
+	long long res;
+
+	res = tmp.tv_sec * 1000 + tmp.tv_usec / 1000;
+	return (res);
+}
+
+long long timedif(struct timeval t1, struct timeval t2)
+{
+	return (my_time(t1) - my_time(t2));
+}
+
+void die(int i, struct timeval start)
+{
+	struct timeval tmp;
+
+	gettimeofday(&tmp, NULL);
+	printf("%lld: %d just died, you're a terrible parent!\n", timedif(tmp ,start), i);
 	exit(0);
 }
 
-void	*aristotle(void *v_plato)
+void *aristotle(void *plato_cpy)
 {
 	struct timeval tmp;
-	t_plato	*plato;
-	int		i;
+	t_conds	*conds;
+	t_plato *plato;
+	int i;
 
 	i = 0;
-	plato = (t_plato *)v_plato;
-	while (plato->status)
+	plato = (t_plato *)plato_cpy;
+	conds = plato->conds_cpy;
+	pthread_mutex_lock(conds->writing);
+	gettimeofday(&tmp, NULL);
+	pthread_mutex_unlock(conds->writing);
+	printf("bitcoin kashelyoki koder: %lld, %d\n", timedif(tmp, conds->starttime), plato->num);
+	while (*plato->status)
 	{
-		pthread_mutex_lock(plato->left);
+		pthread_mutex_lock(plato->first);
+		pthread_mutex_lock(conds->writing);
 		gettimeofday(&tmp, NULL);
-		//pthread_mutex_lock(plato->writing);
-		printf("%d : %d took fork %d with his left hand\n", (int)tmp.tv_usec, plato->num, plato->l);
-		//pthread_mutex_unlock(plato->writing);
-		pthread_mutex_lock(plato->right);
+		printf("%lld : %d took fork %d with his left hand\n", timedif(tmp, conds->starttime), plato->num, plato->f);
+		pthread_mutex_unlock(conds->writing);
+		pthread_mutex_lock(plato->second);
+		pthread_mutex_lock(conds->writing);
 		gettimeofday(&tmp, NULL);
-		//pthread_mutex_lock(plato->writing);
-		printf("%d: %d took fork %d with his right hand\n", (int)tmp.tv_usec, plato->num, plato->r);
-		printf("%d: philosopher %d is eating\n", (int)tmp.tv_usec, plato->num);
-		//pthread_mutex_unlock(plato->writing);
-		usleep(plato->eat * 1000);
+		printf("%lld: %d took fork %d with his right hand\n", timedif(tmp, conds->starttime), plato->num, plato->s);
+		gettimeofday(&tmp, NULL);
+		printf("%lld: philosopher %d is eating\n", timedif(tmp, conds->starttime), plato->num);
+		pthread_mutex_unlock(conds->writing);
+		usleep(conds->eat * 1000);
 		gettimeofday(&(plato->last_eat), NULL);
-		i++;
+		//i++;
 		if (i >= 8)
 			plato->status = 0;
-		//pthread_mutex_lock(plato->writing);
-		printf("%d : %d dropped forks %d and %d\n", (int)plato->last_eat.tv_usec, plato->num, plato->l, plato->r);
-		//pthread_mutex_unlock(plato->writing);
-		pthread_mutex_unlock(plato->right);
-		pthread_mutex_unlock(plato->left);
-		usleep(plato->sleep * 1000);
+		pthread_mutex_lock(conds->writing);
+		gettimeofday(&tmp, NULL);
+		printf("%lld : %d dropped forks %d and %d\n", timedif(tmp, conds->starttime), plato->num, plato->f, plato->s);
+		pthread_mutex_unlock(conds->writing);
+		pthread_mutex_unlock(plato->second);
+		pthread_mutex_unlock(plato->first);
+		usleep(conds->sleep * 1000);
 	}
 	return (NULL);
 }
-//when timeval usec reaches 1000000, it goes to 0, FIX THIS ARA
-int	main(void)
-{//LIBFT IS ***NOT*** ALLOWED
-	int				i;
-	pthread_t		id[5];
-	t_plato			*plato;
-	pthread_mutex_t	mutex[5];
-	pthread_mutex_t	writing;
-	int				status;
-	struct timeval	tmp;
-	
+// when timeval usec reaches 1000000, it goes to 0, FIX THIS ARA
+int main(void)
+{ // LIBFT IS ***NOT*** ALLOWED
+	int i;
+	pthread_t id[5];
+	t_plato	*plato;
+	t_conds	conds;
+	pthread_mutex_t *mutex;
+	pthread_mutex_t writing;
+	int status;
+	struct timeval tmp;
 
+	conds.die = 800;
+	conds.eat = 200;
+	conds.sleep = 200;
+	conds.n = 5;
 	status = 1;
 	i = 0;
-	while (i < 5)
+	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conds.n);
+	if (!mutex)
+		return (0);
+	while (i < conds.n)
 	{
-		pthread_mutex_init(&(mutex[i]), NULL); //check for fail
+		pthread_mutex_init(&(mutex[i]), NULL); // check for fail
 		i++;
 	}
-	pthread_mutex_init(&writing, NULL); 
-	plato = (t_plato *)malloc(sizeof(t_plato) * 5); //same here
+	pthread_mutex_init(&writing, NULL);
+	plato = (t_plato *)malloc(sizeof(t_plato) * conds.n); // same here
 	i = 0;
-	while (i < 5)
+	gettimeofday(&tmp, NULL);
+	conds.starttime = tmp;
+	conds.writing = &writing;
+	while (i < conds.n)
 	{
 		gettimeofday(&(plato->last_eat), NULL);
-		plato[i].eat = 200;
-		plato[i].sleep = 200;
-		plato[i].die = 800;
+		plato[i].last_eat = conds.starttime;
+		plato[i].conds_cpy = &conds;
 		plato[i].status = &status;
 		plato[i].num = i;
-		if (i == 4)
+		if (i == conds.n - 1)
 		{
-			plato[i].l = 0;
-			plato[i].r = i;
+			plato[i].f = 0;
+			plato[i].s = i;
 		}
 		else
 		{
-			plato[i].r = i;
-			plato[i].l = i + 1;
+			plato[i].f = i;
+			plato[i].s = i + 1;
 		}
-		plato[i].left = &(mutex[plato[i].l]);
-		plato[i].right = &(mutex[plato[i].r]);
-		plato[i].writing = &writing;
+		plato[i].first = &(mutex[plato[i].f]);
+		plato[i].second = &(mutex[plato[i].s]);
 		// if (i % 2 == 1)
 		// 	usleep(100);
 		pthread_create(&(id[i]), NULL, aristotle, &(plato[i]));
@@ -112,16 +144,23 @@ int	main(void)
 	while (status)
 	{
 		i = 0;
-		while (i < 5)
+		while (i < conds.n)
 		{
+			pthread_mutex_lock(conds.writing);
 			gettimeofday(&tmp, NULL);
-			if (tmp.tv_usec - plato[i].last_eat.tv_usec >= plato[i].die * 1000)
-				die(i);
+			if (timedif(tmp, plato[i].last_eat) >= (long long)conds.die * 1000)
+			{
+				printf("%lld\n", timedif(tmp, plato[i].last_eat));
+				die(i, conds.starttime);
+			}
+			pthread_mutex_unlock(conds.writing);
 			i++;
 		}
 	}
 	i = 0;
-	while (i < 5)
+	while (i < conds.n)
+	{
 		pthread_detach(id[i++]);
+	}
 	return (0);
 }
