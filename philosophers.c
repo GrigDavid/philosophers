@@ -86,7 +86,7 @@ void *aristotle(void *plato_cpy)
 	}
 	return (NULL);
 }
-// when timeval usec reaches 1000000, it goes to 0, FIX THIS ARA
+
 int main(int argc, char **argv)
 { // LIBFT IS ***NOT*** ALLOWED
 	int i;
