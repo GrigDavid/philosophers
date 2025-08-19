@@ -54,9 +54,9 @@ void *aristotle(void *plato_cpy)
 	conds = plato->conds_cpy;
 	pthread_mutex_lock(conds->writing);
 	gettimeofday(&tmp, NULL);
-	pthread_mutex_unlock(conds->writing);
 	printf("bitcoin kashelyoki koder: %lld, %d\n", timedif(tmp, conds->starttime), plato->num);
-	while (*plato->status)
+	pthread_mutex_unlock(conds->writing);
+	while (1)
 	{
 		pthread_mutex_lock(plato->first);
 		pthread_mutex_lock(conds->writing);
@@ -72,9 +72,9 @@ void *aristotle(void *plato_cpy)
 		pthread_mutex_unlock(conds->writing);
 		usleep(conds->eat * 1000);
 		gettimeofday(&(plato->last_eat), NULL);
-		//i++;
-		if (i >= 8)
-			plato->status = 0;
+		i++;
+		if (conds->fin > 0 && i >= conds->fin)
+			*(plato->status) = 0;
 		pthread_mutex_lock(conds->writing);
 		gettimeofday(&tmp, NULL);
 		printf("%lld : %d dropped forks %d and %d\n", timedif(tmp, conds->starttime), plato->num, plato->f, plato->s);
@@ -82,49 +82,52 @@ void *aristotle(void *plato_cpy)
 		pthread_mutex_unlock(plato->second);
 		pthread_mutex_unlock(plato->first);
 		usleep(conds->sleep * 1000);
+		//pthread_mutex_lock(conds->writing);
 	}
 	return (NULL);
 }
 // when timeval usec reaches 1000000, it goes to 0, FIX THIS ARA
-int main(void)
+int main(int argc, char **argv)
 { // LIBFT IS ***NOT*** ALLOWED
 	int i;
-	pthread_t id[5];
+	pthread_t *id;
 	t_plato	*plato;
-	t_conds	conds;
+	t_conds	*conds;
 	pthread_mutex_t *mutex;
 	pthread_mutex_t writing;
 	int status;
 	struct timeval tmp;
 
-	conds.die = 800;
-	conds.eat = 200;
-	conds.sleep = 200;
-	conds.n = 5;
+	conds = parser(argc, argv);
+	if (!conds)
+		return (0);
 	status = 1;
 	i = 0;
-	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conds.n);
+	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conds->n);
 	if (!mutex)
 		return (0);
-	while (i < conds.n)
+	id = (pthread_t *)malloc(sizeof(pthread_t) * conds->n);
+	if (!id)
+		return (free(mutex), 0);
+	while (i < conds->n)
 	{
 		pthread_mutex_init(&(mutex[i]), NULL); // check for fail
 		i++;
 	}
 	pthread_mutex_init(&writing, NULL);
-	plato = (t_plato *)malloc(sizeof(t_plato) * conds.n); // same here
+	plato = (t_plato *)malloc(sizeof(t_plato) * conds->n); // same here
 	i = 0;
 	gettimeofday(&tmp, NULL);
-	conds.starttime = tmp;
-	conds.writing = &writing;
-	while (i < conds.n)
+	conds->starttime = tmp;
+	conds->writing = &writing;
+	while (i < conds->n)
 	{
 		gettimeofday(&(plato->last_eat), NULL);
-		plato[i].last_eat = conds.starttime;
-		plato[i].conds_cpy = &conds;
+		plato[i].last_eat = conds->starttime;
+		plato[i].conds_cpy = conds;
 		plato[i].status = &status;
 		plato[i].num = i;
-		if (i == conds.n - 1)
+		if (i == conds->n - 1)
 		{
 			plato[i].f = 0;
 			plato[i].s = i;
@@ -144,21 +147,21 @@ int main(void)
 	while (status)
 	{
 		i = 0;
-		while (i < conds.n)
+		while (i < conds->n)
 		{
-			pthread_mutex_lock(conds.writing);
+			pthread_mutex_lock(conds->writing);
 			gettimeofday(&tmp, NULL);
-			if (timedif(tmp, plato[i].last_eat) >= (long long)conds.die * 1000)
+			if (timedif(tmp, plato[i].last_eat) >= (long long)conds->die) // something wrong, dudes are immortal
 			{
 				printf("%lld\n", timedif(tmp, plato[i].last_eat));
-				die(i, conds.starttime);
+				die(i, conds->starttime);
 			}
-			pthread_mutex_unlock(conds.writing);
+			pthread_mutex_unlock(conds->writing);
 			i++;
 		}
 	}
 	i = 0;
-	while (i < conds.n)
+	while (i < conds->n)
 	{
 		pthread_detach(id[i++]);
 	}

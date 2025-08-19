@@ -1,5 +1,41 @@
 #include "philosophers.h"
 
+
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+int	ft_atoi(const char *str)
+{
+	int	i;
+	int	sign;
+	int	num;
+
+	i = 0;
+	sign = 1;
+	num = 0;
+	while (!ft_isdigit(str[i]) && str[i] != '+' && str[i] != '-')
+	{
+		if ((str[i] >= '\t' && str[i] <= '\r') || str[i] == ' ')
+			i++;
+		else
+			return (0);
+	}
+	if (str[i] == '-')
+	{
+		sign *= -1;
+		i++;
+	}
+	else if (str[i] == '+')
+		i++;
+	while (str[i] && ft_isdigit(str[i]))
+		num = 10 * num + str[i++] - '0';
+	return (sign * num);
+}
+
 t_conds	*parser(int argc, char **argv)
 {
 	t_conds	*res;
