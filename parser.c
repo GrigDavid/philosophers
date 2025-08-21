@@ -36,9 +36,8 @@ int	ft_atoi(const char *str)
 	return (sign * num);
 }
 
-t_conds	*parser(int argc, char **argv)
+t_conds	*parser(t_conds *res, int argc, char **argv)
 {
-	t_conds	*res;
 	int		i;
 	int		j;
 
@@ -57,9 +56,6 @@ t_conds	*parser(int argc, char **argv)
 		}
 	}
 	if (i != argc)
-		return (NULL);
-	res = (t_conds *)malloc(sizeof(t_conds));
-	if (!res)
 		return (NULL);
 	res->n = ft_atoi(argv[1]);
 	res->die = ft_atoi(argv[2]);

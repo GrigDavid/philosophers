@@ -23,6 +23,7 @@ typedef struct s_conds
 typedef	struct s_plato
 {
 	t_conds			*conds_cpy;
+	pthread_t 		id;
 	pthread_mutex_t	*first;
 	pthread_mutex_t	*second;
 	struct timeval	last_eat;
@@ -32,6 +33,6 @@ typedef	struct s_plato
 	int				num;
 } t_plato;
 
-t_conds	*parser(int argc, char **argv);
+t_conds	*parser(t_conds *res, int argc, char **argv);
 
 #endif
