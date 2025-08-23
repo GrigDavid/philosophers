@@ -1,5 +1,16 @@
-#include "philosophers.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/23 16:29:32 by dgrigor2          #+#    #+#             */
+/*   Updated: 2025/08/23 16:36:08 by dgrigor2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "philosophers.h"
 
 int	ft_isdigit(int c)
 {
@@ -55,8 +66,6 @@ t_conds	*parser(t_conds *res, int argc, char **argv)
 			i++;
 		}
 	}
-	if (i != argc)
-		return (NULL);
 	res->n = ft_atoi(argv[1]);
 	res->die = ft_atoi(argv[2]);
 	res->eat = ft_atoi(argv[3]);
