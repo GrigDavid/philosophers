@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 16:36:17 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/08/26 18:05:31 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/08/30 19:30:15 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,90 +34,49 @@ void	ft_usleep(size_t milisec)
 		usleep(500);
 }
 
-void	*aristotle(void *plato_cpy)
-{
-	t_conds	*conds;
-	t_plato	*plato;
-	int		i;
-
-	i = 0;
-	plato = (t_plato *)plato_cpy;
-	conds = plato->conds_cpy;
-	if (plato->num % 2 == 0)
-		ft_usleep((conds->eat / 2));
-	pthread_mutex_lock(conds->writing);
-	while (*plato->status)
-	{
-		pthread_mutex_unlock(conds->writing);
-		pthread_mutex_lock(plato->first);
-		ft_print(*plato, 1);//fork
-		if (conds->n > 1)
-		{
-			pthread_mutex_lock(plato->second);
-			ft_print(*plato, 1);//fork
-			ft_print(*plato, 2);//eating
-			pthread_mutex_lock(conds->writing);
-			gettimeofday(&(plato->last_eat), NULL);
-			pthread_mutex_unlock(conds->writing);
-			ft_usleep(conds->eat);
-			ft_print(*plato, 3);//sleep
-			pthread_mutex_unlock(plato->second);
-		}
-		else
-			ft_usleep(conds->die + 1);
-		pthread_mutex_unlock(plato->first);
-		pthread_mutex_lock(conds->writing);
-		if (*plato->status)
-		{
-			pthread_mutex_unlock(conds->writing);
-			ft_usleep(conds->sleep);
-			ft_print(*plato, 4);//think
-			// if (conds->die - conds->eat)
-			// 	ft_usleep((conds->die - conds->eat) * 200);
-			pthread_mutex_lock(conds->writing);
-		}
-	}
-	pthread_mutex_unlock(conds->writing);
-	return (NULL);
-}
-
-
 void	check_death(t_conds conds, t_plato *plato)
 {
 	int				i;
+	int				eaten;
 	struct timeval	tmp;
 
 	pthread_mutex_lock(conds.writing);
 	while (*plato[0].status)
 	{
+		eaten = 0;
 		i = 0;
 		pthread_mutex_unlock(conds.writing);
 		while (i < conds.n)
 		{
 			pthread_mutex_lock(conds.writing);
-			gettimeofday(&tmp, NULL);
-			if (timedif(tmp, plato[i].last_eat) >= (long long)conds.die)
+			if (conds.fin >= 0 && plato[i].eat_count >= conds.fin)
+				eaten++;
+			gettimeofday(&tmp, NULL);//karam krchatem
+			if (timedif(tmp, plato[i++].last_eat) >= (long long)conds.die)
 			{
 				pthread_mutex_unlock(conds.writing);
-				ft_print(plato[i], 5);//death
+				ft_print(plato[i - 1], 5);
+				break ;
 			}
 			else
 				pthread_mutex_unlock(conds.writing);
-			i++;
 		}
-		ft_usleep(10);
+		//pthread_mutex_unlock(conds.writing);//remove if going back
+		ft_usleep(1);
 		pthread_mutex_lock(conds.writing);
+		if (eaten == conds.n)
+			*plato[0].status = 0;
 	}
 	pthread_mutex_unlock(conds.writing);
 }
 
-int main(int argc, char **argv)
-{ // LIBFT IS ***NOT*** ALLOWED
-	int i;
-	t_plato	*plato;
-	t_conds	conds;
-	pthread_mutex_t *mutex;
-	int status;
+int	main(int argc, char **argv)
+{
+	int				i;
+	t_plato			*plato;
+	t_conds			conds;
+	pthread_mutex_t	*mutex;
+	int				status;
 
 	if (!parser(&conds, argc, argv))
 		return (0);
@@ -140,7 +99,7 @@ int main(int argc, char **argv)
 	while (i < conds.n)
 	{
 		plato[i].last_eat = conds.starttime;
-		plato[i].conds_cpy = &conds;
+		plato[i].conds_ptr = &conds;
 		plato[i].status = &status;
 		plato[i].num = i;
 		if (1)

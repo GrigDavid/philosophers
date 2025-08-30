@@ -1,8 +1,8 @@
 CC  = cc
-CFLAGS = #-Wall -Wextra -Werror -g3 #-fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g3 #-fsanitize=thread
 NAME = philo
 DEPS = philosophers.h
-SRCS = philosophers.c parser.c utils.c
+SRCS = philosophers.c parser.c utils.c aristotle.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME) 

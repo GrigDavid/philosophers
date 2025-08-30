@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 16:27:53 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/08/23 17:49:30 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/08/30 19:23:19 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ void	ft_print(t_plato plato, int code)
 {
 	struct timeval	tmp;
 
-	pthread_mutex_lock(plato.conds_cpy->writing);
+	pthread_mutex_lock(plato.conds_ptr->writing);
 	if (*plato.status)
 	{
 		gettimeofday(&tmp, NULL);
-		ft_putlong(timedif(tmp, plato.conds_cpy->starttime));
+		ft_putlong(timedif(tmp, plato.conds_ptr->starttime));
 		write(1, " ", 1);
 		ft_putlong(plato.num + 1);
 		if (code == 1)
@@ -70,5 +70,5 @@ void	ft_print(t_plato plato, int code)
 			*plato.status = 0;
 		}
 	}
-	pthread_mutex_unlock(plato.conds_cpy->writing);
+	pthread_mutex_unlock(plato.conds_ptr->writing);
 }
