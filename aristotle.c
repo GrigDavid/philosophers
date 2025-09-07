@@ -6,47 +6,49 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 19:27:38 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/08/30 19:27:55 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/07 14:35:56 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo.h"
 
-void	eat(t_plato *plato, t_conds *conds)
+static void	eat(t_plato *plato, t_conds *conds)
 {
 	pthread_mutex_lock(plato->first);
-	ft_print(*plato, 1);
+	print_message(*plato, 1);
 	if (conds->n > 1)
 	{
 		pthread_mutex_lock(plato->second);
-		ft_print(*plato, 1);
-		ft_print(*plato, 2);
-		pthread_mutex_lock(conds->writing);
+		print_message(*plato, 1);
+		print_message(*plato, 2);
+		pthread_mutex_lock(conds->last_eat);
 		gettimeofday(&(plato->last_eat), NULL);
-		pthread_mutex_unlock(conds->writing);
-		ft_usleep(conds->eat);
-		pthread_mutex_lock(conds->writing);
-		plato->eat_count++;
-		pthread_mutex_unlock(conds->writing);
-		ft_print(*plato, 3);
+		pthread_mutex_unlock(conds->last_eat);
+		ft_usleep(conds->eat, conds);
+		pthread_mutex_lock(conds->last_eat);
+		if (plato->eat_count < conds->fin)
+			plato->eat_count++;
+		pthread_mutex_unlock(conds->last_eat);
 		pthread_mutex_unlock(plato->second);
 	}
 	else
-		ft_usleep(conds->die + 1);
+		ft_usleep(conds->die + 1, conds);
 	pthread_mutex_unlock(plato->first);
 }
 
-void	ph_sleep(t_plato *plato, t_conds *conds)
+static void	ph_sleep(t_plato *plato, t_conds *conds)
 {
-	pthread_mutex_lock(conds->writing);
-	if (*plato->status)
+	print_message(*plato, 3);
+	pthread_mutex_lock(conds->status_check);
+	if (*conds->status)
 	{
-		pthread_mutex_unlock(conds->writing);
-		ft_usleep(conds->sleep);
-		ft_print(*plato, 4);
+		pthread_mutex_unlock(conds->status_check);
+		ft_usleep(conds->sleep, conds);
+		print_message(*plato, 4);
+		//ft_usleep ((conds->die - conds->eat - conds->sleep), conds);
 	}
 	else
-		pthread_mutex_unlock(conds->writing);
+		pthread_mutex_unlock(conds->status_check);
 }
 
 void	*aristotle(void *plato_ptr)
@@ -58,17 +60,17 @@ void	*aristotle(void *plato_ptr)
 	i = 0;
 	plato = (t_plato *)plato_ptr;
 	conds = plato->conds_ptr;
-	ft_print(*plato, 4);
+	print_message(*plato, 4);
 	if (plato->num % 2 == 0)
-		ft_usleep((conds->eat / 2));
-	pthread_mutex_lock(conds->writing);
-	while (*plato->status)
+		ft_usleep(conds->eat / 2, conds);
+	pthread_mutex_lock(conds->status_check);
+	while (*conds->status)
 	{
-		pthread_mutex_unlock(conds->writing);
+		pthread_mutex_unlock(conds->status_check);
 		eat(plato, conds);
 		ph_sleep(plato, conds);
-		pthread_mutex_lock(conds->writing);
+		pthread_mutex_lock(conds->status_check);
 	}
-	pthread_mutex_unlock(conds->writing);
+	pthread_mutex_unlock(conds->status_check);
 	return (NULL);
 }
