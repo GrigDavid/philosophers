@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 16:29:32 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/07 13:38:48 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/09 16:02:12 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,15 @@ int	fill_struct(t_conds *res, int argc, char **argv)
 	return (1);
 }
 
-t_conds	*parser(t_conds *res, int argc, char **argv)
+t_conds	*parser(int argc, char **argv)
 {
+	t_conds	*conds;
 	int		i;
 	int		j;
 
+	conds = (t_conds *)malloc(sizeof (t_conds));
+	if (!conds)
+		return (NULL);
 	if (argc != 5 && argc != 6)
 		return (NULL);
 	i = 1;
@@ -108,7 +112,7 @@ t_conds	*parser(t_conds *res, int argc, char **argv)
 			i++;
 		}
 	}
-	if (!fill_struct(res, argc, argv))
+	if (!fill_struct(conds, argc, argv))
 		return (NULL);
-	return (res);
+	return (conds);
 }

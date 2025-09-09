@@ -16,12 +16,8 @@ void	check_death(t_conds conds, t_plato *plato)
 		{
 			pthread_mutex_lock(conds.last_eat);
 			if (conds.fin >= 0 && plato[i].eat_count >= conds.fin)
-			{
-				pthread_mutex_unlock(conds.last_eat);
 				eaten++;
-			}
-			else
-				pthread_mutex_unlock(conds.last_eat);
+			pthread_mutex_unlock(conds.last_eat);
 			pthread_mutex_lock(conds.last_eat);
 			gettimeofday(&tmp, NULL);//karam krchatem
 			if (timedif(tmp, plato[i].last_eat) > (long long)conds.die)
@@ -30,7 +26,7 @@ void	check_death(t_conds conds, t_plato *plato)
 				print_message(plato[i], 5);
 				pthread_mutex_lock(conds.status_check);
 				*conds.status = 0;
-				break ;
+				return (pthread_mutex_unlock(conds.status_check), (void)0);
 			}
 			else
 				pthread_mutex_unlock(conds.last_eat);
@@ -40,6 +36,7 @@ void	check_death(t_conds conds, t_plato *plato)
 		pthread_mutex_lock(conds.status_check);
 		if (eaten == conds.n)
 			*conds.status = 0;
+		
 	}
 	pthread_mutex_unlock(conds.status_check);
 }

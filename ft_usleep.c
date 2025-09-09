@@ -23,7 +23,7 @@ void	ft_usleep(size_t milisec, t_conds *conds)
 		if (!*conds->status)
 		{
 			pthread_mutex_unlock(conds->status_check);
-			break;
+			return ;
 		}
 		pthread_mutex_unlock(conds->status_check);
 		usleep(500);

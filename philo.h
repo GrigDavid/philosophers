@@ -53,7 +53,7 @@ typedef struct s_plato
 void		*aristotle(void *plato_ptr);
 void		check_death(t_conds conds, t_plato *plato);
 void		ft_usleep(size_t milisec, t_conds *conds);
-t_conds		*parser(t_conds *res, int argc, char **argv);
+t_conds		*parser(int argc, char **argv);
 void		print_message(t_plato plato, int code);
 long long	my_time(struct timeval tmp);
 long long	timedif(struct timeval t1, struct timeval t2);

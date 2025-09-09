@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 19:27:38 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/07 14:35:56 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/09 14:37:39 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,14 @@ static void	eat(t_plato *plato, t_conds *conds)
 		ft_usleep(conds->eat, conds);
 		pthread_mutex_lock(conds->last_eat);
 		if (plato->eat_count < conds->fin)
-			plato->eat_count++;
+		plato->eat_count++;
 		pthread_mutex_unlock(conds->last_eat);
 		pthread_mutex_unlock(plato->second);
 	}
 	else
-		ft_usleep(conds->die + 1, conds);
+	{
+		ft_usleep(conds->die + 1, conds);//problemi bun
+	}
 	pthread_mutex_unlock(plato->first);
 }
 
@@ -62,7 +64,7 @@ void	*aristotle(void *plato_ptr)
 	conds = plato->conds_ptr;
 	print_message(*plato, 4);
 	if (plato->num % 2 == 0)
-		ft_usleep(conds->eat / 2, conds);
+		usleep(500);
 	pthread_mutex_lock(conds->status_check);
 	while (*conds->status)
 	{

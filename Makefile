@@ -1,5 +1,5 @@
 CC  = cc
-CFLAGS = -Wall -Wextra -Werror #-g3 -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g3 #-fsanitize=thread
 NAME = philo
 DEPS = philo.h Makefile
 SRCS = aristotle.c check_death.c  ft_usleep.c parser.c philo.c print_message.c timedif.c

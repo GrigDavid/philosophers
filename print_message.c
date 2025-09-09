@@ -34,17 +34,17 @@ void	print_message(t_plato plato, int code)
 		write(1, " ", 1);
 		ft_putlong(plato.num + 1);
 		if (code == 1)
-			write(1, " has taken a fork\n", 19);
+			write(1, " has taken a fork\n", 18);
 		else if (code == 2)
-			write(1, " is eating\n", 12);
+			write(1, " is eating\n", 11);
 		else if (code == 3)
-			write(1, " is sleeping\n", 14);
+			write(1, " is sleeping\n", 13);
 		else if (code == 4)
-			write(1, " is thinking\n", 14);
+			write(1, " is thinking\n", 13);
 		else
-			write(1, " died\n", 7);
+			write(1, " died\n", 6);
 		pthread_mutex_unlock(plato.conds_ptr->writing);
 	}
 	else
-		pthread_mutex_lock(plato.conds_ptr->status_check);
+		pthread_mutex_unlock(plato.conds_ptr->status_check);
 }
