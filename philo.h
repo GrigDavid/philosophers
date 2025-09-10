@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef philo_H
-# define philo_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <unistd.h>
 # include <fcntl.h>
@@ -20,7 +20,7 @@
 # include <stdio.h>
 # include <sys/time.h>
 # include <limits.h>
-#include <sys/wait.h>
+# include <sys/wait.h>
 //# include "libft/libft.h"
 
 typedef struct s_conds

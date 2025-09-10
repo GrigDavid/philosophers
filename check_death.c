@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_death.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/10 17:20:25 by dgrigor2          #+#    #+#             */
+/*   Updated: 2025/09/10 17:20:40 by dgrigor2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	check_death(t_conds conds, t_plato *plato)
@@ -36,7 +48,6 @@ void	check_death(t_conds conds, t_plato *plato)
 		pthread_mutex_lock(conds.status_check);
 		if (eaten == conds.n)
 			*conds.status = 0;
-		
 	}
 	pthread_mutex_unlock(conds.status_check);
 }

@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 16:29:32 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/09 16:02:12 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/10 17:19:35 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-int     alt_atoi(const char *str)
+int	alt_atoi(const char *str)
 {
 	long	num;
 
