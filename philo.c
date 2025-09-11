@@ -45,6 +45,7 @@ t_conds	*get_conds(int argc, char **argv)
 		return (free(conds->last_eat), free(conds->status_check), NULL);
 	}
 	*conds->status = 1;
+	gettimeofday(&conds->starttime, NULL);
 	return (conds);
 }
 
@@ -97,7 +98,38 @@ int	init_cond_mutexes(t_conds *conds)
 	return (1);
 }
 
+t_plato	*get_platos(t_conds *conds, pthread_mutex_t *mutex)
+{
+	t_plato	*plato;
+	int		i;
 
+	plato = (t_plato *)malloc(sizeof(t_plato) * conds->n);
+	if (!plato)
+		return (destroy_conds_mutex(conds, 3), NULL);
+	i = 0;
+	while (i < conds->n)
+	{
+		plato[i].last_eat = conds->starttime;
+		plato[i].conds_ptr = conds;
+		plato[i].num = i;
+		if (i % 2)
+		{
+			plato[i].first = &mutex[i];
+			plato[i].second = &mutex[0];
+			if (i + 1 < conds->n)
+				plato[i].second = &mutex[i + 1];
+		}
+		else//
+		{//
+			plato[i].second = &mutex[i];
+			plato[i].first = &mutex[0];
+			if (i + 1 < conds->n)
+				plato[i].first = &mutex[i + 1];
+		}//
+		plato[i++].eat_count = 0;
+	}
+	return (plato);
+}
 
 int	main(int argc, char **argv)
 {
@@ -114,35 +146,9 @@ int	main(int argc, char **argv)
 		return (0);
 	if (!init_cond_mutexes(conds))
 		return (destroy_mutex_arr(mutex, conds->n), 0);
-	plato = (t_plato *)malloc(sizeof(t_plato) * conds->n);
+	plato = get_platos(conds, mutex);
 	if (!plato)
-		return (destroy_mutex_arr(mutex, conds->n), destroy_conds_mutex(conds, 3), 0);
-	gettimeofday(&conds->starttime, NULL);
-	i = 0;
-	while (i < conds->n)
-	{
-		plato[i].last_eat = conds->starttime;
-		plato[i].conds_ptr = conds;
-		plato[i].num = i;
-		if (i % 2)
-		{
-			plato[i].f = i;
-			plato[i].s = i + 1;
-			if (i >= conds->n - 1)
-				plato[i].s = 0;
-		}
-		else
-		{
-			plato[i].f = i + 1;
-			plato[i].s = i;
-			if (i >= conds->n - 1)
-				plato[i].f = 0;
-		}
-		plato[i].first = &(mutex[plato[i].f]);
-		plato[i].second = &(mutex[plato[i].s]);
-		plato[i].eat_count = 0;
-		i++;
-	}
+		return (destroy_mutex_arr(mutex, conds->n), 0);
 	i = -1;
 	while (++i < conds->n)
 		pthread_create(&plato[i].id, NULL, aristotle, &(plato[i]));
@@ -150,15 +156,8 @@ int	main(int argc, char **argv)
 	i = 0;
 	while (i < conds->n)
 		pthread_join(plato[i++].id, NULL);
-	i = 0;
-	while (i < conds->n)
-		pthread_mutex_destroy(&mutex[i++]);
-	free(conds->writing);
-	free(conds->status);
-	free(conds->status_check);
-	free(conds->last_eat);
-	free(conds);
-	free(mutex);
+	destroy_mutex_arr(mutex, conds->n);
+	destroy_conds_mutex(conds, 3);
 	free(plato);
 	return (0);
 }

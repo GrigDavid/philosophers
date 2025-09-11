@@ -44,8 +44,6 @@ typedef struct s_plato
 	pthread_mutex_t	*first;
 	pthread_mutex_t	*second;
 	struct timeval	last_eat;
-	int				f;
-	int				s;
 	int				num;
 	int				eat_count;
 }	t_plato;
