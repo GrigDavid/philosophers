@@ -22,118 +22,30 @@ void	destroy_mutex_arr(pthread_mutex_t *mutex, int i)
 	free(mutex);
 }
 
-t_conds	*get_conds(int argc, char **argv)
+void	start_dinner(t_plato *plato, t_conds *conds, pthread_mutex_t *mutex)
 {
-	t_conds	*conds;
+	int	i;
 
-	conds = parser(argc, argv);
-	if (!conds)
-		return (NULL);
-	conds->writing = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	if (!conds->writing)
-		return (NULL);
-	conds->last_eat = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	if (!conds->last_eat)
-		return (free(conds->writing), NULL);
-	conds->status_check = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	if (!conds->status_check)
-		return (free(conds->writing), free(conds->last_eat), NULL);
-	conds->status = (int *)malloc(sizeof(int));
-	if (!conds->status)
+	i = -1;
+	while (++i < conds->n)
 	{
-		free(conds->writing);
-		return (free(conds->last_eat), free(conds->status_check), NULL);
-	}
-	*conds->status = 1;
-	gettimeofday(&conds->starttime, NULL);
-	return (conds);
-}
-
-void	free_conds(t_conds *conds)
-{
-	free(conds->writing);
-	free(conds->last_eat);
-	free(conds->status_check);
-	free(conds->status);
-	free(conds);
-}
-
-pthread_mutex_t	*get_forks(t_conds *conds)
-{
-	pthread_mutex_t	*mutex;
-	int				i;
-
-	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conds->n);
-	if (!mutex)
-		return (free_conds(conds), NULL);
-	i = 0;
-	while (i < conds->n)
-	{
-		if (pthread_mutex_init(&(mutex[i]), NULL))
-			return (destroy_mutex_arr(mutex, i), free_conds(conds), NULL);
-		i++;
-	}
-	return (mutex);
-}
-
-void	destroy_conds_mutex(t_conds *conds, int n)
-{
-	if (n >= 1)
-		pthread_mutex_destroy(conds->writing);
-	if (n >= 2)
-		pthread_mutex_destroy(conds->last_eat);
-	if (n == 3)
-		pthread_mutex_destroy(conds->status_check);
-	free_conds(conds);
-}
-
-int	init_cond_mutexes(t_conds *conds)
-{
-	if (pthread_mutex_init(conds->writing, NULL))
-		return (free_conds(conds), 0);
-	if (pthread_mutex_init(conds->last_eat, NULL))
-		return (destroy_conds_mutex(conds, 1), 0);
-	if (pthread_mutex_init(conds->status_check, NULL))
-		return (destroy_conds_mutex(conds, 2), 0);
-	return (1);
-}
-
-t_plato	*get_platos(t_conds *conds, pthread_mutex_t *mutex)
-{
-	t_plato	*plato;
-	int		i;
-
-	plato = (t_plato *)malloc(sizeof(t_plato) * conds->n);
-	if (!plato)
-		return (destroy_conds_mutex(conds, 3), NULL);
-	i = 0;
-	while (i < conds->n)
-	{
-		plato[i].last_eat = conds->starttime;
-		plato[i].conds_ptr = conds;
-		plato[i].num = i;
-		if (i % 2)
+		if (pthread_create(&plato[i].id, NULL, aristotle, &(plato[i])))
 		{
-			plato[i].first = &mutex[i];
-			plato[i].second = &mutex[0];
-			if (i + 1 < conds->n)
-				plato[i].second = &mutex[i + 1];
+			*conds->status = 0;
+			break;
 		}
-		else//
-		{//
-			plato[i].second = &mutex[i];
-			plato[i].first = &mutex[0];
-			if (i + 1 < conds->n)
-				plato[i].first = &mutex[i + 1];
-		}//
-		plato[i++].eat_count = 0;
 	}
-	return (plato);
+	check_death(*conds, plato);
+	i = 0;
+	while (i < conds->n)
+		pthread_join(plato[i++].id, NULL);
+	destroy_mutex_arr(mutex, conds->n);
+	destroy_conds_mutex(conds, 3);
+	free(plato);
 }
 
 int	main(int argc, char **argv)
 {
-	int				i;
 	t_plato			*plato;
 	t_conds			*conds;
 	pthread_mutex_t	*mutex;
@@ -146,18 +58,10 @@ int	main(int argc, char **argv)
 		return (0);
 	if (!init_cond_mutexes(conds))
 		return (destroy_mutex_arr(mutex, conds->n), 0);
+	gettimeofday(&conds->starttime, NULL);
 	plato = get_platos(conds, mutex);
 	if (!plato)
 		return (destroy_mutex_arr(mutex, conds->n), 0);
-	i = -1;
-	while (++i < conds->n)
-		pthread_create(&plato[i].id, NULL, aristotle, &(plato[i]));
-	check_death(*conds, plato);
-	i = 0;
-	while (i < conds->n)
-		pthread_join(plato[i++].id, NULL);
-	destroy_mutex_arr(mutex, conds->n);
-	destroy_conds_mutex(conds, 3);
-	free(plato);
+	start_dinner(plato, conds, mutex);
 	return (0);
 }

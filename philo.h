@@ -48,12 +48,19 @@ typedef struct s_plato
 	int				eat_count;
 }	t_plato;
 
-void		*aristotle(void *plato_ptr);
-void		check_death(t_conds conds, t_plato *plato);
-void		ft_usleep(size_t milisec, t_conds *conds);
-t_conds		*parser(int argc, char **argv);
-void		print_message(t_plato plato, int code);
-long long	my_time(struct timeval tmp);
-long long	timedif(struct timeval t1, struct timeval t2);
+void			*aristotle(void *plato_ptr);
+void			check_death(t_conds conds, t_plato *plato);
+t_conds			*get_conds(int argc, char **argv);
+void			free_conds(t_conds *conds);
+void			destroy_conds_mutex(t_conds *conds, int n);
+int				init_cond_mutexes(t_conds *conds);
+void			ft_usleep(size_t milisec, t_conds *conds);
+t_conds			*parser(int argc, char **argv);
+void			destroy_mutex_arr(pthread_mutex_t *mutex, int i);
+pthread_mutex_t	*get_forks(t_conds *conds);
+t_plato			*get_platos(t_conds *conds, pthread_mutex_t *mutex);
+void			print_message(t_plato plato, int code);
+long long		my_time(struct timeval tmp);
+long long		timedif(struct timeval t1, struct timeval t2);
 
 #endif

@@ -2,7 +2,7 @@ CC  = cc
 CFLAGS = -Wall -Wextra -Werror -g3 #-fsanitize=thread
 NAME = philo
 DEPS = philo.h
-SRCS = aristotle.c check_death.c  ft_usleep.c parser.c philo.c print_message.c timedif.c
+SRCS = aristotle.c check_death.c conds.c ft_usleep.c parser.c plato.c philo.c print_message.c timedif.c
 OBJS_LOC = objs
 OBJS = $(SRCS:%.c=$(OBJS_LOC)/%.o)
 
