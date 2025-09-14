@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-size_t	get_cur_time(void)
+static size_t	get_cur_time(void)
 {
 	struct timeval	currtime;
 

@@ -12,62 +12,34 @@
 
 #include "philo.h"
 
-int	ft_isdigit(int c)
+static int	ft_isdigit(int c)
 {
 	if (c >= '0' && c <= '9')
 		return (1);
 	return (0);
 }
 
-int	alt_atoi(const char *str)
+static int	alt_atoi(const char *str)
 {
 	long	num;
 
 	num = 0;
-	if (*str == '-' || *str == '+' || *str == '0')
-		return (0);
+	if (*str == '0')
+		return (printf("numbers should not start with 0\n"), 0);
 	while (*str)
 	{
 		if (*str >= '0' && *str <= '9')
 			num = 10 * num + *str - '0';
 		else
-			return (0);
+			return (printf("arguments should be numbers\n"), 0);
 		if (num > INT_MAX)
-			return (0);
+			return (printf("INT limit reached\n"), 0);
 		str++;
 	}
 	return ((int)num);
 }
 
-int	ft_atoi(const char *str)
-{
-	int	i;
-	int	sign;
-	int	num;
-
-	i = 0;
-	sign = 1;
-	num = 0;
-	while (!ft_isdigit(str[i]) && str[i] != '+' && str[i] != '-')
-	{
-		if ((str[i] >= '\t' && str[i] <= '\r') || str[i] == ' ')
-			i++;
-		else
-			return (0);
-	}
-	if (str[i] == '-')
-	{
-		sign *= -1;
-		i++;
-	}
-	else if (str[i] == '+')
-		i++;
-	while (str[i] && ft_isdigit(str[i]))
-		num = 10 * num + str[i++] - '0';
-	return (sign * num);
-}
-
-int	fill_struct(t_conds *res, int argc, char **argv)
+static int	fill_struct(t_conds *res, int argc, char **argv)
 {
 	res->n = alt_atoi(argv[1]);
 	if (!res->n)
@@ -99,13 +71,13 @@ t_conds	*parser(int argc, char **argv)
 	if (!conds)
 		return (NULL);
 	if (argc != 5 && argc != 6)
-		return (NULL);
+		return (printf("there should be 4 or 5 arguments\n"), NULL);
 	i = 1;
 	j = 0;
 	while (argv[i])
 	{
 		if (!ft_isdigit(argv[i][j++]))
-			return (NULL);
+			return (printf("arguments should be numbers\n"), NULL);
 		if (!argv[i][j])
 		{
 			j = 0;

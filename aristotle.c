@@ -33,7 +33,7 @@ static void	eat(t_plato *plato, t_conds *conds)
 	}
 	else
 	{
-		ft_usleep(conds->die + 1, conds);//problemi bun
+		ft_usleep(conds->die + 1, conds);
 	}
 	pthread_mutex_unlock(plato->first);
 }
@@ -47,7 +47,6 @@ static void	ph_sleep(t_plato *plato, t_conds *conds)
 		pthread_mutex_unlock(conds->status_check);
 		ft_usleep(conds->sleep, conds);
 		print_message(*plato, 4);
-		//ft_usleep ((conds->die - conds->eat - conds->sleep), conds);
 	}
 	else
 		pthread_mutex_unlock(conds->status_check);

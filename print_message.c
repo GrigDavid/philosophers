@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	ft_putlong(long long num)
+static int	ft_putlong(long long num)
 {
 	char	zero;
 

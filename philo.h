@@ -21,7 +21,6 @@
 # include <sys/time.h>
 # include <limits.h>
 # include <sys/wait.h>
-//# include "libft/libft.h"
 
 typedef struct s_conds
 {
@@ -60,7 +59,6 @@ void			destroy_mutex_arr(pthread_mutex_t *mutex, int i);
 pthread_mutex_t	*get_forks(t_conds *conds);
 t_plato			*get_platos(t_conds *conds, pthread_mutex_t *mutex);
 void			print_message(t_plato plato, int code);
-long long		my_time(struct timeval tmp);
 long long		timedif(struct timeval t1, struct timeval t2);
 
 #endif

@@ -22,7 +22,7 @@ void	destroy_mutex_arr(pthread_mutex_t *mutex, int i)
 	free(mutex);
 }
 
-void	start_dinner(t_plato *plato, t_conds *conds, pthread_mutex_t *mutex)
+static void	start_dinner(t_plato *plato, t_conds *conds, pthread_mutex_t *mutex)
 {
 	int	i;
 
