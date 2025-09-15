@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 17:19:13 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/15 15:46:22 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:52:01 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ void	print_message(t_plato plato, int code)
 {
 	struct timeval	tmp;
 
+	pthread_mutex_lock(plato.conds_ptr->writing);
 	pthread_mutex_lock(plato.conds_ptr->status_check);
 	if (*plato.conds_ptr->status)
 	{
 		pthread_mutex_unlock(plato.conds_ptr->status_check);
-		pthread_mutex_lock(plato.conds_ptr->writing);
 		gettimeofday(&tmp, NULL);
 		ft_putlong(timedif(tmp, plato.conds_ptr->starttime));
 		write(1, " ", 1);
@@ -64,8 +64,8 @@ void	print_message(t_plato plato, int code)
 			write(1, " is thinking\n", 13);
 		else
 			die(plato.conds_ptr);
-		pthread_mutex_unlock(plato.conds_ptr->writing);
 	}
 	else
 		pthread_mutex_unlock(plato.conds_ptr->status_check);
+	pthread_mutex_unlock(plato.conds_ptr->writing);
 }
