@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 17:19:13 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/10 17:19:14 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:46:22 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@ static int	ft_putlong(long long num)
 	return (write(1, &zero, 1));
 }
 
+static void	die(t_conds *conds)
+{
+	write(1, " is thinking\n", 13);
+	pthread_mutex_lock(conds->status_check);
+	*conds->status = 0;
+	pthread_mutex_unlock(conds->status_check);
+}
+
+
 void	print_message(t_plato plato, int code)
 {
 	struct timeval	tmp;
@@ -54,7 +63,7 @@ void	print_message(t_plato plato, int code)
 		else if (code == 4)
 			write(1, " is thinking\n", 13);
 		else
-			write(1, " died\n", 6);
+			die(plato.conds_ptr);
 		pthread_mutex_unlock(plato.conds_ptr->writing);
 	}
 	else

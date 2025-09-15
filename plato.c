@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   plato.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/15 14:33:39 by dgrigor2          #+#    #+#             */
+/*   Updated: 2025/09/15 14:33:53 by dgrigor2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 pthread_mutex_t	*get_forks(t_conds *conds)
@@ -17,7 +29,6 @@ pthread_mutex_t	*get_forks(t_conds *conds)
 	}
 	return (mutex);
 }
-
 
 static void	fill_plato(t_plato *plato, pthread_mutex_t *mutex, int i)
 {

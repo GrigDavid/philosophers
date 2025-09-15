@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 16:29:32 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/10 17:19:35 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:42:46 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,13 @@ t_conds	*parser(int argc, char **argv)
 	if (!conds)
 		return (NULL);
 	if (argc != 5 && argc != 6)
-		return (printf("there should be 4 or 5 arguments\n"), NULL);
+		return (free(conds), printf("there should be 4 or 5 arguments\n"), NULL);
 	i = 1;
 	j = 0;
 	while (argv[i])
 	{
 		if (!ft_isdigit(argv[i][j++]))
-			return (printf("arguments should be numbers\n"), NULL);
+			return (free(conds), printf("arguments should be numbers\n"), NULL);
 		if (!argv[i][j])
 		{
 			j = 0;
@@ -85,6 +85,6 @@ t_conds	*parser(int argc, char **argv)
 		}
 	}
 	if (!fill_struct(conds, argc, argv))
-		return (NULL);
+		return (free(conds), NULL);
 	return (conds);
 }

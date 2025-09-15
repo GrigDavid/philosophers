@@ -32,7 +32,7 @@ static void	start_dinner(t_plato *plato, t_conds *conds, pthread_mutex_t *mutex)
 		if (pthread_create(&plato[i].id, NULL, aristotle, &(plato[i])))
 		{
 			*conds->status = 0;
-			break;
+			break ;
 		}
 	}
 	check_death(*conds, plato);
