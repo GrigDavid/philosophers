@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 16:29:32 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/15 15:42:46 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:12:54 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ t_conds	*parser(int argc, char **argv)
 	if (!conds)
 		return (NULL);
 	if (argc != 5 && argc != 6)
-		return (free(conds), printf("there should be 4 or 5 arguments\n"), NULL);
+		return (free(conds), printf("wrong number of arguments\n"), NULL);
 	i = 1;
 	j = 0;
 	while (argv[i])

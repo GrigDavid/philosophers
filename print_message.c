@@ -6,7 +6,7 @@
 /*   By: dgrigor2 <dgrigor2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 17:19:13 by dgrigor2          #+#    #+#             */
-/*   Updated: 2025/09/15 15:52:01 by dgrigor2         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:13:13 by dgrigor2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ static void	die(t_conds *conds)
 	*conds->status = 0;
 	pthread_mutex_unlock(conds->status_check);
 }
-
 
 void	print_message(t_plato plato, int code)
 {
